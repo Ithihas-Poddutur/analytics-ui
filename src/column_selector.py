@@ -5,12 +5,12 @@ import streamlit as st
 
 
 class ColumnSelector:
-    """For every view (each individual table, plus the blended table if one
-    exists), lets the user pick a subset of columns to display. Returns a
-    dict of {view_name: DataFrame} trimmed to the chosen columns."""
+    """For every selected table, lets the user pick a subset of columns to
+    display. Returns a dict of {view_name: DataFrame} trimmed to the chosen
+    columns."""
 
     def render(self, views: dict[str, pd.DataFrame]) -> dict[str, pd.DataFrame]:
-        st.header("4. Choose columns to display")
+        st.header("3. Choose columns to display")
 
         trimmed = {}
         cols_ui = st.columns(min(len(views), 3) or 1)

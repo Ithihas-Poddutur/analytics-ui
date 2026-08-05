@@ -39,17 +39,18 @@ class AnalyticsApp:
             return
 
         st.divider()
-        blended_df = self.blender.render(selected_tables)
+        visible_tables = self.column_selector.render(selected_tables)
 
-        views = dict(selected_tables)
+        st.divider()
+        blended_df = self.blender.render(visible_tables)
+        join_key_groups = self.blender.get_join_key_groups()
+
+        views = dict(visible_tables)
         if blended_df is not None:
-            views = {"Combined": blended_df, **selected_tables}
+            views = {"Combined": blended_df, **visible_tables}
 
         st.divider()
-        visible_views = self.column_selector.render(views)
-
-        st.divider()
-        filtered_views = self.filter_manager.render(visible_views)
+        filtered_views = self.filter_manager.render(views, join_key_groups)
 
         st.divider()
         self.table_viewer.render(filtered_views)

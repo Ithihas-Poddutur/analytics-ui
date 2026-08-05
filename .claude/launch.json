@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "analytics-ui",
-      "runtimeExecutable": "/Users/nikhithareddy/Desktop/Claude Code/analytics_ui/.venv/bin/streamlit",
+      "runtimeExecutable": ".venv\\Scripts\\streamlit.exe",
       "runtimeArgs": ["run", "app.py"],
       "port": 8501
     }
