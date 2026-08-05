@@ -16,7 +16,7 @@ class DataBlender:
             st.session_state.join_steps = []  # list of dicts: table, left_on, right_on, how
 
     def render(self, tables: dict[str, pd.DataFrame]) -> pd.DataFrame | None:
-        st.header("3. Data blending (joins)")
+        st.header("4. Data blending (joins)")
         self._init_state()
 
         names = list(tables.keys())
@@ -101,3 +101,30 @@ class DataBlender:
 
         st.caption(f"Blended result: {blended.shape[0]} rows x {blended.shape[1]} cols")
         return blended
+
+    def get_join_key_groups(self) -> list[set[str]]:
+        """Groups of column names that were used as equal join keys (e.g.
+        {'Symbol', 'TICKER'}), so callers can treat them as the same field
+        even though the two tables spell it differently."""
+        parent: dict[str, str] = {}
+
+        def find(x: str) -> str:
+            parent.setdefault(x, x)
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+
+        def union(a: str, b: str):
+            ra, rb = find(a), find(b)
+            if ra != rb:
+                parent[ra] = rb
+
+        for step in st.session_state.get("join_steps", []):
+            for left_col, right_col in zip(step["left_on"], step["right_on"]):
+                union(left_col, right_col)
+
+        groups: dict[str, set[str]] = {}
+        for name in parent:
+            groups.setdefault(find(name), set()).add(name)
+        return [g for g in groups.values() if len(g) > 1]
